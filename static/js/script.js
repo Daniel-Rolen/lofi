@@ -27,8 +27,35 @@ document.addEventListener('DOMContentLoaded', async function() {
         logMessage(`${type} network state: ${states[element.networkState]}`);
     }
 
-    logMessage(`Video file exists: ${await fetch(video.src).then(response => response.ok)}`);
-    logMessage(`Audio file exists: ${await fetch(audio.src).then(response => response.ok)}`);
+    function checkMediaLoaded(element, type) {
+        if (element.readyState >= 2) {
+            logMessage(`${type} is loaded and can be played`);
+            return true;
+        } else {
+            logMessage(`${type} is not yet loaded`);
+            return false;
+        }
+    }
+
+    async function checkFileExists(url) {
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+            return response.ok;
+        } catch (error) {
+            logError(`Error checking file existence: ${error.message}`);
+            return false;
+        }
+    }
+
+    logMessage(`Video source: ${video.currentSrc}`);
+    logMessage(`Audio source: ${audio.currentSrc}`);
+
+    const videoExists = await checkFileExists(video.currentSrc);
+    const audioExists = await checkFileExists(audio.currentSrc);
+
+    logMessage(`Video file exists: ${videoExists}`);
+    logMessage(`Audio file exists: ${audioExists}`);
+
     logMessage(`Initial video ready state: ${video.readyState}`);
     logMessage(`Initial audio ready state: ${audio.readyState}`);
 
@@ -37,25 +64,17 @@ document.addEventListener('DOMContentLoaded', async function() {
         const error = video.error;
         logError(`Video error: ${errorTypes[error.code - 1]}, ${error.message}`);
     });
-    audio.addEventListener('error', (e) => logError(`Audio error: ${audio.error.message}`));
+
+    audio.addEventListener('error', (e) => {
+        const errorTypes = ['MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED'];
+        const error = audio.error;
+        logError(`Audio error: ${errorTypes[error.code - 1]}, ${error.message}`);
+    });
 
     function showOverlay() {
         overlay.style.display = 'flex';
         overlay.addEventListener('click', startMedia);
     }
-
-    // Check if video file exists and log its size
-    fetch(video.src)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.blob();
-      })
-      .then(blob => {
-        logMessage(`Video file size: ${blob.size} bytes`);
-      })
-      .catch(e => logError(`Error fetching video: ${e.message}`));
 
     let videoLoaded = false;
     let audioLoaded = false;
@@ -69,8 +88,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
     video.addEventListener('canplay', () => {
         logMessage('Video can start playing');
-        videoLoaded = true;
-        if (audioLoaded) startMedia();
+        videoLoaded = checkMediaLoaded(video, 'Video');
+        if (videoLoaded && audioLoaded) startMedia();
     });
 
     audio.addEventListener('loadstart', () => logMessage('Audio load started'));
@@ -81,18 +100,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
     audio.addEventListener('canplay', () => {
         logMessage('Audio can start playing');
-        audioLoaded = true;
-        if (videoLoaded) startMedia();
+        audioLoaded = checkMediaLoaded(audio, 'Audio');
+        if (videoLoaded && audioLoaded) startMedia();
     });
 
     video.addEventListener('play', () => logMessage('Video play event'));
     video.addEventListener('pause', () => logMessage('Video pause event'));
     audio.addEventListener('play', () => logMessage('Audio play event'));
     audio.addEventListener('pause', () => logMessage('Audio pause event'));
-
-    // Check if video and audio sources are set correctly
-    logMessage(`Video source: ${video.currentSrc}`);
-    logMessage(`Audio source: ${audio.currentSrc}`);
 
     function startMedia() {
         logMessage('Attempting to start media...');
@@ -112,5 +127,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // We don't need to call startMedia() here anymore as it will be called when both video and audio are loaded
+    // Initial check for media loaded state
+    videoLoaded = checkMediaLoaded(video, 'Video');
+    audioLoaded = checkMediaLoaded(audio, 'Audio');
+    if (videoLoaded && audioLoaded) startMedia();
 });
