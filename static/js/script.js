@@ -22,10 +22,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         logMessage(`Error: ${error}`);
     }
 
+    function logNetworkState(element, type) {
+        const states = ['NETWORK_EMPTY', 'NETWORK_IDLE', 'NETWORK_LOADING', 'NETWORK_NO_SOURCE'];
+        logMessage(`${type} network state: ${states[element.networkState]}`);
+    }
+
     logMessage(`Video file exists: ${await fetch(video.src).then(response => response.ok)}`);
     logMessage(`Audio file exists: ${await fetch(audio.src).then(response => response.ok)}`);
-    logMessage(`Video ready state: ${video.readyState}`);
-    logMessage(`Audio ready state: ${audio.readyState}`);
+    logMessage(`Initial video ready state: ${video.readyState}`);
+    logMessage(`Initial audio ready state: ${audio.readyState}`);
 
     video.addEventListener('error', (e) => {
         const errorTypes = ['MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED'];
@@ -55,17 +60,27 @@ document.addEventListener('DOMContentLoaded', async function() {
     let videoLoaded = false;
     let audioLoaded = false;
 
+    video.addEventListener('loadstart', () => logMessage('Video load started'));
+    video.addEventListener('durationchange', () => logMessage(`Video duration set: ${video.duration}`));
     video.addEventListener('loadedmetadata', () => {
         logMessage('Video metadata loaded');
         logMessage(`Video width: ${video.videoWidth}, height: ${video.videoHeight}`);
-        logMessage(`Video duration: ${video.duration}`);
+        logNetworkState(video, 'Video');
+    });
+    video.addEventListener('canplay', () => {
+        logMessage('Video can start playing');
         videoLoaded = true;
         if (audioLoaded) startMedia();
     });
 
+    audio.addEventListener('loadstart', () => logMessage('Audio load started'));
+    audio.addEventListener('durationchange', () => logMessage(`Audio duration set: ${audio.duration}`));
     audio.addEventListener('loadedmetadata', () => {
         logMessage('Audio metadata loaded');
-        logMessage(`Audio duration: ${audio.duration}`);
+        logNetworkState(audio, 'Audio');
+    });
+    audio.addEventListener('canplay', () => {
+        logMessage('Audio can start playing');
         audioLoaded = true;
         if (videoLoaded) startMedia();
     });
@@ -97,6 +112,5 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // Attempt to start media immediately
-    startMedia();
+    // We don't need to call startMedia() here anymore as it will be called when both video and audio are loaded
 });
