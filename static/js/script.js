@@ -96,16 +96,26 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Add fade-in/fade-out effect
     function fadeEffect() {
-        if (video.currentTime > video.duration - 1) {
-            video.style.opacity = 1 - (video.duration - video.currentTime);
-        } else if (video.currentTime < 1) {
-            video.style.opacity = video.currentTime;
+        const fadeDuration = 2; // Duration of fade in seconds
+        const fadeStart = 1; // Start fading this many seconds before the end
+
+        if (video.currentTime > video.duration - fadeStart) {
+            const fadeAmount = 1 - (video.duration - video.currentTime) / fadeStart;
+            video.style.opacity = 1 - fadeAmount;
+        } else if (video.currentTime < fadeStart) {
+            video.style.opacity = video.currentTime / fadeStart;
         } else {
             video.style.opacity = 1;
         }
+
+        requestAnimationFrame(fadeEffect);
     }
 
-    video.addEventListener('timeupdate', fadeEffect);
+    // Start the fade effect
+    fadeEffect();
+
+    // Remove the 'timeupdate' event listener as we're now using requestAnimationFrame
+    video.removeEventListener('timeupdate', fadeEffect);
 
     video.addEventListener('ended', () => {
         video.currentTime = 0;
