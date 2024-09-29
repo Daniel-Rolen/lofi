@@ -18,9 +18,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     function logError(error) {
-        console.error('Error:', error.name, error.message);
-        console.error('Error details:', error);
-        logMessage(`Error: ${error.name} - ${error.message}`);
+        console.error('Error:', error);
+        logMessage(`Error: ${error}`);
     }
 
     logMessage(`Video file exists: ${await fetch(video.src).then(response => response.ok)}`);
@@ -28,13 +27,34 @@ document.addEventListener('DOMContentLoaded', async function() {
     logMessage(`Video ready state: ${video.readyState}`);
     logMessage(`Audio ready state: ${audio.readyState}`);
 
-    video.addEventListener('error', (e) => logError(`Video error: ${video.error.message}`));
+    video.addEventListener('error', (e) => {
+        const errorTypes = ['MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED'];
+        const error = video.error;
+        logError(`Video error: ${errorTypes[error.code - 1]}, ${error.message}`);
+    });
     audio.addEventListener('error', (e) => logError(`Audio error: ${audio.error.message}`));
 
     function showOverlay() {
         overlay.style.display = 'flex';
         overlay.addEventListener('click', startMedia);
     }
+
+    // Check if video file exists and log its size
+    fetch(video.src)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.blob();
+      })
+      .then(blob => {
+        logMessage(`Video file size: ${blob.size} bytes`);
+      })
+      .catch(e => logError(`Error fetching video: ${e.message}`));
+
+    // Log video element properties
+    logMessage(`Video width: ${video.videoWidth}, height: ${video.videoHeight}`);
+    logMessage(`Video duration: ${video.duration}`);
 
     function startMedia() {
         logMessage('Attempting to start media...');
