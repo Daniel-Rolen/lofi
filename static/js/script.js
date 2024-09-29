@@ -52,26 +52,23 @@ document.addEventListener('DOMContentLoaded', async function() {
       })
       .catch(e => logError(`Error fetching video: ${e.message}`));
 
-    // Log video element properties
-    logMessage(`Video width: ${video.videoWidth}, height: ${video.videoHeight}`);
-    logMessage(`Video duration: ${video.duration}`);
+    let videoLoaded = false;
+    let audioLoaded = false;
 
-    function startMedia() {
-        logMessage('Attempting to start media...');
-        Promise.all([
-            video.play().catch(logError),
-            audio.play().catch(logError)
-        ]).then(() => {
-            logMessage('Both video and audio started successfully');
-            overlay.style.display = 'none';
-        }).catch((error) => {
-            logError(error);
-            showOverlay();
-        });
-    }
+    video.addEventListener('loadedmetadata', () => {
+        logMessage('Video metadata loaded');
+        logMessage(`Video width: ${video.videoWidth}, height: ${video.videoHeight}`);
+        logMessage(`Video duration: ${video.duration}`);
+        videoLoaded = true;
+        if (audioLoaded) startMedia();
+    });
 
-    video.addEventListener('loadedmetadata', () => logMessage('Video metadata loaded'));
-    audio.addEventListener('loadedmetadata', () => logMessage('Audio metadata loaded'));
+    audio.addEventListener('loadedmetadata', () => {
+        logMessage('Audio metadata loaded');
+        logMessage(`Audio duration: ${audio.duration}`);
+        audioLoaded = true;
+        if (videoLoaded) startMedia();
+    });
 
     video.addEventListener('play', () => logMessage('Video play event'));
     video.addEventListener('pause', () => logMessage('Video pause event'));
@@ -81,6 +78,24 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Check if video and audio sources are set correctly
     logMessage(`Video source: ${video.currentSrc}`);
     logMessage(`Audio source: ${audio.currentSrc}`);
+
+    function startMedia() {
+        logMessage('Attempting to start media...');
+        if (videoLoaded && audioLoaded) {
+            Promise.all([
+                video.play().catch(logError),
+                audio.play().catch(logError)
+            ]).then(() => {
+                logMessage('Both video and audio started successfully');
+                overlay.style.display = 'none';
+            }).catch((error) => {
+                logError(error);
+                showOverlay();
+            });
+        } else {
+            logMessage('Waiting for video and audio to load...');
+        }
+    }
 
     // Attempt to start media immediately
     startMedia();
