@@ -28,11 +28,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     function checkMediaLoaded(element, type) {
-        if (element.readyState >= 2) {
+        if (element.readyState >= 3) {
             logMessage(`${type} is loaded and can be played`);
             return true;
         } else {
-            logMessage(`${type} is not yet loaded`);
+            logMessage(`${type} is not yet loaded (readyState: ${element.readyState})`);
             return false;
         }
     }
@@ -45,6 +45,24 @@ document.addEventListener('DOMContentLoaded', async function() {
             logError(`Error checking file existence: ${error.message}`);
             return false;
         }
+    }
+
+    function retryMediaLoad(element, type, maxRetries = 3, delay = 2000) {
+        let retries = 0;
+        function attemptLoad() {
+            if (checkMediaLoaded(element, type)) {
+                return;
+            }
+            if (retries < maxRetries) {
+                retries++;
+                logMessage(`Retrying ${type} load (attempt ${retries}/${maxRetries})...`);
+                element.load();
+                setTimeout(attemptLoad, delay);
+            } else {
+                logError(`Failed to load ${type} after ${maxRetries} attempts`);
+            }
+        }
+        attemptLoad();
     }
 
     logMessage(`Video source: ${video.currentSrc}`);
@@ -63,12 +81,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         const errorTypes = ['MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED'];
         const error = video.error;
         logError(`Video error: ${errorTypes[error.code - 1]}, ${error.message}`);
+        logError(`Video error details: ${JSON.stringify(error)}`);
     });
 
     audio.addEventListener('error', (e) => {
         const errorTypes = ['MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED'];
         const error = audio.error;
         logError(`Audio error: ${errorTypes[error.code - 1]}, ${error.message}`);
+        logError(`Audio error details: ${JSON.stringify(error)}`);
     });
 
     function showOverlay() {
@@ -130,5 +150,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Initial check for media loaded state
     videoLoaded = checkMediaLoaded(video, 'Video');
     audioLoaded = checkMediaLoaded(audio, 'Audio');
+
+    // Retry loading if media is not loaded
+    if (!videoLoaded) retryMediaLoad(video, 'Video');
+    if (!audioLoaded) retryMediaLoad(audio, 'Audio');
+
     if (videoLoaded && audioLoaded) startMedia();
 });
