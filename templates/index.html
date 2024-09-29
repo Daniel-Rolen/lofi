@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Video with Audio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="video-container">
+        <video id="background-video" autoplay loop muted playsinline>
+            <source src="{{ url_for('static', filename='video/background.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <audio id="background-audio" loop>
+        <source src="{{ url_for('static', filename='audio/background.mp3') }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <div class="overlay">
+        <p>Click anywhere to enable audio</p>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
