@@ -2,24 +2,23 @@ document.addEventListener('DOMContentLoaded', async function() {
     const video = document.getElementById('background-video');
     const audio = document.getElementById('background-audio');
     const overlay = document.querySelector('.overlay');
+    const debugArea = document.getElementById('debug-area');
 
     function logMessage(message) {
         console.log(message);
         const logElement = document.createElement('div');
         logElement.textContent = message;
-        logElement.style.position = 'fixed';
-        logElement.style.top = '10px';
-        logElement.style.left = '10px';
-        logElement.style.color = 'white';
-        logElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-        logElement.style.padding = '5px';
-        logElement.style.zIndex = '9999';
-        document.body.appendChild(logElement);
+        debugArea.appendChild(logElement);
+        debugArea.scrollTop = debugArea.scrollHeight;
     }
 
     function logError(error) {
         console.error('Error:', error);
-        logMessage(`Error: ${error}`);
+        const errorElement = document.createElement('div');
+        errorElement.textContent = `Error: ${error}`;
+        errorElement.style.color = 'red';
+        debugArea.appendChild(errorElement);
+        debugArea.scrollTop = debugArea.scrollHeight;
     }
 
     function logNetworkState(element, type) {
@@ -29,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function checkMediaLoaded(element, type) {
         if (element.readyState >= 3) {
-            logMessage(`${type} is loaded and can be played`);
+            logMessage(`${type} is loaded and can be played (readyState: ${element.readyState})`);
             return true;
         } else {
             logMessage(`${type} is not yet loaded (readyState: ${element.readyState})`);
@@ -65,6 +64,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         attemptLoad();
     }
 
+    function checkNetworkStatus(element, type) {
+        const networkState = element.networkState;
+        const states = ['NETWORK_EMPTY', 'NETWORK_IDLE', 'NETWORK_LOADING', 'NETWORK_NO_SOURCE'];
+        logMessage(`${type} network status: ${states[networkState]}`);
+    }
+
     logMessage(`Video source: ${video.currentSrc}`);
     logMessage(`Audio source: ${audio.currentSrc}`);
 
@@ -77,6 +82,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     logMessage(`Initial video ready state: ${video.readyState}`);
     logMessage(`Initial audio ready state: ${audio.readyState}`);
 
+    video.addEventListener('loadstart', () => logMessage('Video load started'));
+    video.addEventListener('progress', () => logMessage('Video download in progress'));
+    video.addEventListener('canplay', () => logMessage('Video can be played'));
+    video.addEventListener('canplaythrough', () => logMessage('Video can be played through without buffering'));
+    video.addEventListener('play', () => logMessage('Video play event'));
+    video.addEventListener('pause', () => logMessage('Video pause event'));
+    video.addEventListener('waiting', () => logMessage('Video waiting for more data'));
+    video.addEventListener('playing', () => logMessage('Video is playing'));
+    video.addEventListener('ended', () => logMessage('Video playback ended'));
     video.addEventListener('error', (e) => {
         const errorTypes = ['MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED'];
         const error = video.error;
@@ -84,6 +98,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         logError(`Video error details: ${JSON.stringify(error)}`);
     });
 
+    audio.addEventListener('loadstart', () => logMessage('Audio load started'));
+    audio.addEventListener('progress', () => logMessage('Audio download in progress'));
+    audio.addEventListener('canplay', () => logMessage('Audio can be played'));
+    audio.addEventListener('canplaythrough', () => logMessage('Audio can be played through without buffering'));
+    audio.addEventListener('play', () => logMessage('Audio play event'));
+    audio.addEventListener('pause', () => logMessage('Audio pause event'));
+    audio.addEventListener('waiting', () => logMessage('Audio waiting for more data'));
+    audio.addEventListener('playing', () => logMessage('Audio is playing'));
+    audio.addEventListener('ended', () => logMessage('Audio playback ended'));
     audio.addEventListener('error', (e) => {
         const errorTypes = ['MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED'];
         const error = audio.error;
@@ -99,35 +122,28 @@ document.addEventListener('DOMContentLoaded', async function() {
     let videoLoaded = false;
     let audioLoaded = false;
 
-    video.addEventListener('loadstart', () => logMessage('Video load started'));
-    video.addEventListener('durationchange', () => logMessage(`Video duration set: ${video.duration}`));
     video.addEventListener('loadedmetadata', () => {
         logMessage('Video metadata loaded');
         logMessage(`Video width: ${video.videoWidth}, height: ${video.videoHeight}`);
-        logNetworkState(video, 'Video');
+        checkNetworkStatus(video, 'Video');
     });
+
     video.addEventListener('canplay', () => {
         logMessage('Video can start playing');
         videoLoaded = checkMediaLoaded(video, 'Video');
         if (videoLoaded && audioLoaded) startMedia();
     });
 
-    audio.addEventListener('loadstart', () => logMessage('Audio load started'));
-    audio.addEventListener('durationchange', () => logMessage(`Audio duration set: ${audio.duration}`));
     audio.addEventListener('loadedmetadata', () => {
         logMessage('Audio metadata loaded');
-        logNetworkState(audio, 'Audio');
+        checkNetworkStatus(audio, 'Audio');
     });
+
     audio.addEventListener('canplay', () => {
         logMessage('Audio can start playing');
         audioLoaded = checkMediaLoaded(audio, 'Audio');
         if (videoLoaded && audioLoaded) startMedia();
     });
-
-    video.addEventListener('play', () => logMessage('Video play event'));
-    video.addEventListener('pause', () => logMessage('Video pause event'));
-    audio.addEventListener('play', () => logMessage('Audio play event'));
-    audio.addEventListener('pause', () => logMessage('Audio pause event'));
 
     function startMedia() {
         logMessage('Attempting to start media...');
