@@ -3,9 +3,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const audio = document.getElementById('background-audio');
     const overlay = document.querySelector('.overlay');
 
+    function logMessage(message) {
+        console.log(message);
+        const logElement = document.createElement('div');
+        logElement.textContent = message;
+        logElement.style.position = 'fixed';
+        logElement.style.top = '10px';
+        logElement.style.left = '10px';
+        logElement.style.color = 'white';
+        logElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        logElement.style.padding = '5px';
+        logElement.style.zIndex = '9999';
+        document.body.appendChild(logElement);
+    }
+
     function logError(error) {
         console.error('Error:', error.name, error.message);
         console.error('Error details:', error);
+        logMessage(`Error: ${error.name} - ${error.message}`);
     }
 
     function showOverlay() {
@@ -14,12 +29,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function startMedia() {
-        console.log('Attempting to start media...');
+        logMessage('Attempting to start media...');
         Promise.all([
             video.play().catch(logError),
             audio.play().catch(logError)
         ]).then(() => {
-            console.log('Both video and audio started successfully');
+            logMessage('Both video and audio started successfully');
             overlay.style.display = 'none';
         }).catch((error) => {
             logError(error);
@@ -27,13 +42,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    video.addEventListener('loadedmetadata', () => console.log('Video metadata loaded'));
-    audio.addEventListener('loadedmetadata', () => console.log('Audio metadata loaded'));
+    video.addEventListener('loadedmetadata', () => logMessage('Video metadata loaded'));
+    audio.addEventListener('loadedmetadata', () => logMessage('Audio metadata loaded'));
 
-    video.addEventListener('play', () => console.log('Video play event'));
-    video.addEventListener('pause', () => console.log('Video pause event'));
-    audio.addEventListener('play', () => console.log('Audio play event'));
-    audio.addEventListener('pause', () => console.log('Audio pause event'));
+    video.addEventListener('play', () => logMessage('Video play event'));
+    video.addEventListener('pause', () => logMessage('Video pause event'));
+    audio.addEventListener('play', () => logMessage('Audio play event'));
+    audio.addEventListener('pause', () => logMessage('Audio pause event'));
+
+    // Check if video and audio sources are set correctly
+    logMessage(`Video source: ${video.currentSrc}`);
+    logMessage(`Audio source: ${audio.currentSrc}`);
 
     // Attempt to start media immediately
     startMedia();

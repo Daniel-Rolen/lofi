@@ -9,6 +9,10 @@ html, body {
     overflow: hidden;
 }
 
+body {
+    background-color: #000; /* Set a background color in case video doesn't load */
+}
+
 .video-container {
     position: fixed;
     top: 0;
@@ -29,6 +33,7 @@ html, body {
     height: auto;
     transform: translate(-50%, -50%);
     object-fit: cover;
+    display: block; /* Ensure video is visible */
 }
 
 .overlay {
@@ -45,6 +50,7 @@ html, body {
     align-items: center;
     font-family: Arial, sans-serif;
     text-align: center;
+    z-index: 1000; /* Ensure overlay is on top */
 }
 
 .overlay h1 {
