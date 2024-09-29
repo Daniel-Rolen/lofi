@@ -148,16 +148,21 @@ document.addEventListener('DOMContentLoaded', async function() {
     function startMedia() {
         logMessage('Attempting to start media...');
         if (videoLoaded && audioLoaded) {
-            Promise.all([
-                video.play().catch(logError),
-                audio.play().catch(logError)
-            ]).then(() => {
-                logMessage('Both video and audio started successfully');
-                overlay.style.display = 'none';
-            }).catch((error) => {
-                logError(error);
+            if (video.currentSrc && audio.currentSrc) {
+                Promise.all([
+                    video.play().catch(logError),
+                    audio.play().catch(logError)
+                ]).then(() => {
+                    logMessage('Both video and audio started successfully');
+                    overlay.style.display = 'none';
+                }).catch((error) => {
+                    logError(error);
+                    showOverlay();
+                });
+            } else {
+                logError('Video or audio source is missing');
                 showOverlay();
-            });
+            }
         } else {
             logMessage('Waiting for video and audio to load...');
         }
