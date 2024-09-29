@@ -9,8 +9,8 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-def get_random_file(folder):
-    files = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))]
+def get_random_file(folder, file_types):
+    files = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f)) and f.lower().endswith(file_types)]
     logger.info(f"Available files in {folder}: {files}")
     return random.choice(files) if files else None
 
@@ -19,8 +19,8 @@ def index():
     logger.info("Serving index page")
     video_folder = os.path.join(app.root_path, 'static', 'video')
     audio_folder = os.path.join(app.root_path, 'static', 'audio')
-    random_video = get_random_file(video_folder)
-    random_audio = get_random_file(audio_folder)
+    random_video = get_random_file(video_folder, ('.mp4', '.webm'))
+    random_audio = get_random_file(audio_folder, ('.mp3', '.ogg'))
     logger.info(f"Selected video file: {random_video}")
     logger.info(f"Selected audio file: {random_audio}")
     return render_template('index.html', video_file=random_video, audio_file=random_audio)

@@ -68,14 +68,17 @@ document.addEventListener('DOMContentLoaded', async function() {
             logMessage('Audio started successfully');
         }
         
-        if (videoLoaded) {
+        if (videoLoaded && video.src) {
             video.play().catch(logError);
             logMessage('Video started successfully');
             overlay.style.display = 'none';
+            videoPlaceholder.style.display = 'none';
+            video.style.display = 'block';
         } else {
-            logMessage('Video not loaded, showing placeholder');
+            logMessage('Video not available or not loaded, showing placeholder');
             videoPlaceholder.style.display = 'block';
             video.style.display = 'none';
+            overlay.style.display = 'none';
         }
     }
 
@@ -96,6 +99,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Add fade-in/fade-out effect
     function fadeEffect() {
+        if (!videoLoaded || !video.src) return;
+
         const fadeDuration = 2; // Duration of fade in seconds
         const fadeStart = 1; // Start fading this many seconds before the end
 
