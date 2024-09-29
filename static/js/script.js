@@ -93,4 +93,22 @@ document.addEventListener('DOMContentLoaded', async function() {
     audioLoaded = checkMediaLoaded(audio, 'Audio');
 
     if (audioLoaded) startMedia();
+
+    // Add fade-in/fade-out effect
+    function fadeEffect() {
+        if (video.currentTime > video.duration - 1) {
+            video.style.opacity = 1 - (video.duration - video.currentTime);
+        } else if (video.currentTime < 1) {
+            video.style.opacity = video.currentTime;
+        } else {
+            video.style.opacity = 1;
+        }
+    }
+
+    video.addEventListener('timeupdate', fadeEffect);
+
+    video.addEventListener('ended', () => {
+        video.currentTime = 0;
+        video.play();
+    });
 });
