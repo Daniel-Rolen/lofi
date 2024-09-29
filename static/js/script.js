@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     const video = document.getElementById('background-video');
     const audio = document.getElementById('background-audio');
     const overlay = document.querySelector('.overlay');
@@ -22,6 +22,14 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Error details:', error);
         logMessage(`Error: ${error.name} - ${error.message}`);
     }
+
+    logMessage(`Video file exists: ${await fetch(video.src).then(response => response.ok)}`);
+    logMessage(`Audio file exists: ${await fetch(audio.src).then(response => response.ok)}`);
+    logMessage(`Video ready state: ${video.readyState}`);
+    logMessage(`Audio ready state: ${audio.readyState}`);
+
+    video.addEventListener('error', (e) => logError(`Video error: ${video.error.message}`));
+    audio.addEventListener('error', (e) => logError(`Audio error: ${audio.error.message}`));
 
     function showOverlay() {
         overlay.style.display = 'flex';

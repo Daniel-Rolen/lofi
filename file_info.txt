@@ -1,0 +1,7 @@
+Video file: static/video/background.mp4
+Video file size: $(awk '/background.mp4/ {print $1}' file_sizes.txt) bytes
+Video file type: MP4
+
+Audio file: static/audio/background.mp3
+Audio file size: $(awk '/background.mp3/ {print $1}' file_sizes.txt) bytes
+Audio file type: MP3
