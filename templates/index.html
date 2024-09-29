@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="video-container">
-        <video id="background-video" autoplay loop playsinline muted>
+        <video id="background-video" autoplay loop playsinline>
             <source src="{{ url_for('static', filename='video/background.mp4') }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
@@ -19,7 +19,7 @@
     </audio>
     <div class="overlay">
         <h1>Welcome to Our Website</h1>
-        <p>Click anywhere to enable audio</p>
+        <p>Enjoy the background video and audio</p>
     </div>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
