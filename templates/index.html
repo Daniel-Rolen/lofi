@@ -12,6 +12,7 @@
             <source src="{{ url_for('static', filename='video/' + video_file) }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
+        <div id="video-placeholder"></div>
     </div>
     <audio id="background-audio" autoplay loop>
         <source src="{{ url_for('static', filename='audio/' + audio_file) }}" type="audio/mpeg">

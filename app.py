@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 def get_random_file(folder):
     files = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))]
+    logger.info(f"Available files in {folder}: {files}")
     return random.choice(files) if files else None
 
 @app.route('/')
@@ -20,6 +21,8 @@ def index():
     audio_folder = os.path.join(app.root_path, 'static', 'audio')
     random_video = get_random_file(video_folder)
     random_audio = get_random_file(audio_folder)
+    logger.info(f"Selected video file: {random_video}")
+    logger.info(f"Selected audio file: {random_audio}")
     return render_template('index.html', video_file=random_video, audio_file=random_audio)
 
 @app.route('/static/video/<path:filename>')
