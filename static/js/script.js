@@ -40,10 +40,18 @@ document.addEventListener('DOMContentLoaded', async function() {
     let videoLoaded = false;
     let audioLoaded = false;
 
+    // Log video.src immediately after it's set
+    logMessage(`Initial video src: ${video.src}`);
+
     video.addEventListener('loadedmetadata', () => {
         logMessage('Video metadata loaded');
         logMessage(`Video src: ${video.src}`);
         logMessage(`Video width: ${video.videoWidth}, height: ${video.videoHeight}`);
+    });
+
+    // Add error event listener to catch and log any loading errors
+    video.addEventListener('error', (e) => {
+        logError(`Video loading error: ${video.error.message}`);
     });
 
     video.addEventListener('canplay', () => {

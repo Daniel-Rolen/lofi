@@ -26,6 +26,15 @@ def index():
     
     random_video = get_random_file(video_folder, ('.mp4', '.webm', '.ogg', '.mov'))
     random_audio = get_random_file(audio_folder, ('.mp3', '.ogg'))
+    
+    # Log full path of the selected video file
+    if random_video:
+        full_video_path = os.path.join(video_folder, random_video)
+        logger.info(f"Full path of selected video file: {full_video_path}")
+        logger.info(f"Video file exists: {os.path.exists(full_video_path)}")
+    else:
+        logger.warning("No video file selected")
+    
     logger.info(f"Selected video file: {random_video}")
     logger.info(f"Selected audio file: {random_audio}")
     return render_template('index.html', video_file=random_video, audio_file=random_audio)
