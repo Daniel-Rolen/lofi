@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const debugArea = document.getElementById('debug-area');
     const videoPlaceholder = document.getElementById('video-placeholder');
 
+    let emptyCount = 0;
+    const MAX_EMPTY_ATTEMPTS = 5;
+
     function logMessage(message) {
         console.log(message);
         const logElement = document.createElement('div');
@@ -31,14 +34,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function resetVideoSource() {
+        const videoSrc = video.querySelector('source').src;
+        video.src = videoSrc;
+        video.load();
+        emptyCount = 0;
+    }
+
     function checkVideoSource() {
         logMessage(`Checking video source - Video src: ${video.src}`);
         logMessage(`Checking video source - Video currentSrc: ${video.currentSrc}`);
         logMessage(`Checking video source - Video readyState: ${video.readyState}`);
         if (!video.src || !video.currentSrc) {
             logError('Video source is empty');
-            // Attempt to reload the video
-            video.load();
+            resetVideoSource();
         }
     }
 
@@ -69,7 +78,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     video.addEventListener('error', (e) => {
-        logError(`Video loading error: ${video.error ? video.error.message : 'Unknown error'}`);
+        logError(`Video error: ${video.error ? video.error.message : 'Unknown error'}`);
+        resetVideoSource();
     });
 
     video.addEventListener('canplay', () => {
@@ -95,8 +105,13 @@ document.addEventListener('DOMContentLoaded', function() {
         logMessage('Video source has been emptied');
         logMessage(`Video src after emptied: ${video.src}`);
         logMessage(`Video currentSrc after emptied: ${video.currentSrc}`);
-        // Attempt to reload the video
-        video.load();
+        
+        if (emptyCount < MAX_EMPTY_ATTEMPTS) {
+            emptyCount++;
+            video.load();
+        } else {
+            logError('Max empty attempts reached. Please refresh the page.');
+        }
     });
 
     video.addEventListener('abort', () => {
