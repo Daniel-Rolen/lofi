@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!videoLoaded || !video.src) return;
 
         const fadeDuration = 2;
-        const fadeStart = 1;
+        const fadeStart = fadeDuration;
 
         if (video.currentTime > video.duration - fadeStart) {
             const fadeAmount = 1 - (video.duration - video.currentTime) / fadeStart;
@@ -122,6 +122,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     video.addEventListener('ended', () => {
         video.currentTime = 0;
-        video.play();
+        video.play().catch(logError);
     });
 });
