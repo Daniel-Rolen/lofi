@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let audioLoaded = false;
 
     logMessage(`Initial video src: ${video.src}`);
+    logMessage(`Initial video currentSrc: ${video.currentSrc}`);
     logMessage(`Video dimensions: ${video.offsetWidth}x${video.offsetHeight}`);
     logMessage(`Video visibility: ${window.getComputedStyle(video).display}`);
 
@@ -53,16 +54,23 @@ document.addEventListener('DOMContentLoaded', function() {
         videoLoaded = checkMediaLoaded(video, 'Video');
         logMessage(`Video loaded: ${videoLoaded}`);
         logMessage(`Video src: ${video.src}`);
+        logMessage(`Video currentSrc: ${video.currentSrc}`);
         logMessage(`Video readyState: ${video.readyState}`);
-        if (videoLoaded) {
+        if (videoLoaded && video.src) {
             videoPlaceholder.style.display = 'none';
             video.style.display = 'block';
+            video.play().catch(logError);
         } else {
-            logMessage('Video not loaded, showing placeholder');
+            logMessage('Video not available or not loaded, showing placeholder');
             videoPlaceholder.style.display = 'block';
             video.style.display = 'none';
         }
-        startMedia();
+    });
+
+    video.addEventListener('emptied', () => {
+        logMessage('Video source has been emptied');
+        logMessage(`Video src after emptied: ${video.src}`);
+        logMessage(`Video currentSrc after emptied: ${video.currentSrc}`);
     });
 
     audio.addEventListener('canplay', () => {
@@ -81,18 +89,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (videoLoaded && video.src) {
             video.play().catch(logError);
             logMessage('Video started successfully');
+            logMessage(`Video src in startMedia: ${video.src}`);
+            logMessage(`Video currentSrc in startMedia: ${video.currentSrc}`);
             logMessage(`Video dimensions: ${video.offsetWidth}x${video.offsetHeight}`);
             logMessage(`Video visibility: ${window.getComputedStyle(video).display}`);
             videoPlaceholder.style.display = 'none';
             video.style.display = 'block';
         } else {
             logMessage('Video not available or not loaded, showing placeholder');
+            logMessage(`Video src in startMedia (not loaded): ${video.src}`);
+            logMessage(`Video currentSrc in startMedia (not loaded): ${video.currentSrc}`);
             videoPlaceholder.style.display = 'block';
             video.style.display = 'none';
-            if (audioLoaded) {
-                logMessage('Playing audio without video');
-                audio.play().catch(logError);
-            }
         }
     }
 
