@@ -31,6 +31,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function checkVideoSource() {
+        logMessage(`Checking video source - Video src: ${video.src}`);
+        logMessage(`Checking video source - Video currentSrc: ${video.currentSrc}`);
+        logMessage(`Checking video source - Video readyState: ${video.readyState}`);
+        if (!video.src || !video.currentSrc) {
+            logError('Video source is empty');
+            // Attempt to reload the video
+            video.load();
+        }
+    }
+
     let videoLoaded = false;
     let audioLoaded = false;
 
@@ -77,12 +88,20 @@ document.addEventListener('DOMContentLoaded', function() {
             videoPlaceholder.style.display = 'block';
             video.style.display = 'none';
         }
+        checkVideoSource();
     });
 
     video.addEventListener('emptied', () => {
         logMessage('Video source has been emptied');
         logMessage(`Video src after emptied: ${video.src}`);
         logMessage(`Video currentSrc after emptied: ${video.currentSrc}`);
+        // Attempt to reload the video
+        video.load();
+    });
+
+    video.addEventListener('abort', () => {
+        logError('Video loading aborted');
+        checkVideoSource();
     });
 
     audio.addEventListener('canplay', () => {
@@ -93,6 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function startMedia() {
         logMessage('Attempting to start media...');
+        checkVideoSource();
         if (audioLoaded) {
             audio.play().catch(logError);
             logMessage('Audio started successfully');
@@ -147,5 +167,6 @@ document.addEventListener('DOMContentLoaded', function() {
         logMessage(`Periodic check - Video src: ${video.src}`);
         logMessage(`Periodic check - Video currentSrc: ${video.currentSrc}`);
         logMessage(`Periodic check - Video readyState: ${video.readyState}`);
+        checkVideoSource();
     }, 5000);
 });
