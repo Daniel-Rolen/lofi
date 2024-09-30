@@ -102,3 +102,15 @@ body {
         height: 100%;
     }
 }
+
+.logo-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
+}

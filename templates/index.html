@@ -12,9 +12,7 @@
             <source src="{{ url_for('static', filename='video/' + video_file) }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <div id="video-placeholder">
-            <p>No video available. Enjoy the background audio!</p>
-        </div>
+        <div id="video-placeholder"></div>
     </div>
     <audio id="background-audio" autoplay loop>
         <source src="{{ url_for('static', filename='audio/' + audio_file) }}" type="audio/mpeg">
@@ -25,6 +23,9 @@
         <p>Enjoy the background video and audio</p>
     </div>
     <div id="debug-area"></div>
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo/example_logo.png') }}" alt="Logo" class="logo">
+    </div>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

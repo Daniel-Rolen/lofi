@@ -19,6 +19,7 @@ def index():
     logger.info("Serving index page")
     video_folder = os.path.join(app.static_folder, 'video')
     audio_folder = os.path.join(app.static_folder, 'audio')
+    logo_file = os.path.join(app.static_folder, 'logo', 'example_logo.png')
     
     # Log the contents of the video folder
     video_files = os.listdir(video_folder)
@@ -34,6 +35,9 @@ def index():
         logger.info(f"Video file exists: {os.path.exists(full_video_path)}")
     else:
         logger.warning("No video file selected")
+    
+    # Log the existence of the logo file
+    logger.info(f"Logo file exists: {os.path.exists(logo_file)}")
     
     logger.info(f"Selected video file: {random_video}")
     logger.info(f"Selected audio file: {random_audio}")
