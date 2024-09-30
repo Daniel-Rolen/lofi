@@ -12,7 +12,12 @@ logger = logging.getLogger(__name__)
 def get_random_file(folder, file_types):
     files = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f)) and f.lower().endswith(file_types)]
     logger.info(f"Available files in {folder}: {files}")
-    return random.choice(files) if files else None
+    if not files:
+        logger.warning(f"No files found in {folder} with types {file_types}")
+        return None
+    chosen_file = random.choice(files)
+    logger.info(f"Chosen file: {chosen_file}")
+    return chosen_file
 
 @app.route('/')
 def index():

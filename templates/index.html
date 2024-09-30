@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="video-container">
-        <video id="background-video" autoplay loop playsinline>
+        <video id="background-video" autoplay loop playsinline onerror="logError('Video loading failed');">
             <source src="{{ url_for('static', filename='video/' + video_file) }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
