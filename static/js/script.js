@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     video.addEventListener('loadedmetadata', () => {
         logMessage('Video metadata loaded');
+        logMessage(`Video src: ${video.src}`);
         logMessage(`Video width: ${video.videoWidth}, height: ${video.videoHeight}`);
     });
 
@@ -79,6 +80,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             videoPlaceholder.style.display = 'block';
             video.style.display = 'none';
             overlay.style.display = 'none';
+            if (audioLoaded) {
+                logMessage('Playing audio without video');
+                audio.play().catch(logError);
+            }
         }
     }
 
@@ -88,6 +93,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             logMessage('Video loading timeout reached (10 seconds)');
             videoPlaceholder.style.display = 'block';
             video.style.display = 'none';
+            if (audioLoaded) {
+                logMessage('Playing audio without video after timeout');
+                audio.play().catch(logError);
+            }
         }
     }, 10000);
 

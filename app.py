@@ -19,7 +19,12 @@ def index():
     logger.info("Serving index page")
     video_folder = os.path.join(app.root_path, 'static', 'video')
     audio_folder = os.path.join(app.root_path, 'static', 'audio')
-    random_video = get_random_file(video_folder, ('.mp4', '.webm'))
+    
+    # Log the contents of the video folder
+    video_files = os.listdir(video_folder)
+    logger.info(f"Contents of video folder: {video_files}")
+    
+    random_video = get_random_file(video_folder, ('.mp4', '.webm', '.ogg', '.mov'))
     random_audio = get_random_file(audio_folder, ('.mp3', '.ogg'))
     logger.info(f"Selected video file: {random_video}")
     logger.info(f"Selected audio file: {random_audio}")
