@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Video with Audio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="video-container">
+        <video id="background-video" autoplay loop playsinline onerror="logError('Video loading failed');">
+            <source src="{{ url_for('static', filename='video/' + video_file) }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div id="video-placeholder"></div>
+    </div>
+    <audio id="background-audio" autoplay>
+        <source src="{{ url_for('static', filename='audio/' + audio_files[0]) }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <div id="debug-area"></div>
+    {% if logo_exists %}
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo/' + logo_file) }}" alt="Logo" class="logo">
+    </div>
+    {% endif %}
+    <script>
+        var audioFiles = {{ audio_files|tojson|safe }};
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
