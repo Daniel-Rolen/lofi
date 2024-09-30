@@ -51,6 +51,12 @@ document.addEventListener('DOMContentLoaded', function() {
         logMessage(`Video width: ${video.videoWidth}, height: ${video.videoHeight}`);
     });
 
+    video.addEventListener('loadeddata', () => {
+        logMessage('Video data loaded');
+        logMessage(`Video src after data loaded: ${video.src}`);
+        logMessage(`Video currentSrc after data loaded: ${video.currentSrc}`);
+    });
+
     video.addEventListener('error', (e) => {
         logError(`Video loading error: ${video.error ? video.error.message : 'Unknown error'}`);
     });
@@ -136,4 +142,10 @@ document.addEventListener('DOMContentLoaded', function() {
         video.currentTime = 0;
         video.play().catch(logError);
     });
+
+    setInterval(() => {
+        logMessage(`Periodic check - Video src: ${video.src}`);
+        logMessage(`Periodic check - Video currentSrc: ${video.currentSrc}`);
+        logMessage(`Periodic check - Video readyState: ${video.readyState}`);
+    }, 5000);
 });
