@@ -17,8 +17,8 @@ def get_random_file(folder, file_types):
 @app.route('/')
 def index():
     logger.info("Serving index page")
-    video_folder = os.path.join(app.root_path, 'static', 'video')
-    audio_folder = os.path.join(app.root_path, 'static', 'audio')
+    video_folder = os.path.join(app.static_folder, 'video')
+    audio_folder = os.path.join(app.static_folder, 'audio')
     
     # Log the contents of the video folder
     video_files = os.listdir(video_folder)
@@ -42,14 +42,12 @@ def index():
 @app.route('/static/video/<path:filename>')
 def serve_video(filename):
     logger.info(f"Serving video file: {filename}")
-    return send_from_directory(os.path.join(app.root_path, 'static', 'video'),
-                               filename)
+    return send_from_directory(os.path.join(app.root_path, 'static', 'video'), filename)
 
 @app.route('/static/audio/<path:filename>')
 def serve_audio(filename):
     logger.info(f"Serving audio file: {filename}")
-    return send_from_directory(os.path.join(app.root_path, 'static', 'audio'),
-                               filename)
+    return send_from_directory(os.path.join(app.root_path, 'static', 'audio'), filename)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

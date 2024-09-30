@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', function() {
     const video = document.getElementById('background-video');
     const audio = document.getElementById('background-audio');
     const overlay = document.querySelector('.overlay');
@@ -34,14 +34,14 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function showOverlay() {
         overlay.style.display = 'flex';
-        overlay.addEventListener('click', startMedia);
     }
 
     let videoLoaded = false;
     let audioLoaded = false;
 
-    // Log video.src immediately after it's set
     logMessage(`Initial video src: ${video.src}`);
+    logMessage(`Video dimensions: ${video.offsetWidth}x${video.offsetHeight}`);
+    logMessage(`Video visibility: ${window.getComputedStyle(video).display}`);
 
     video.addEventListener('loadedmetadata', () => {
         logMessage('Video metadata loaded');
@@ -49,9 +49,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         logMessage(`Video width: ${video.videoWidth}, height: ${video.videoHeight}`);
     });
 
-    // Add error event listener to catch and log any loading errors
     video.addEventListener('error', (e) => {
-        logError(`Video loading error: ${video.error.message}`);
+        logError(`Video loading error: ${video.error ? video.error.message : 'Unknown error'}`);
     });
 
     video.addEventListener('canplay', () => {
@@ -61,13 +60,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             videoPlaceholder.style.display = 'none';
             video.style.display = 'block';
         }
-        if (audioLoaded) startMedia();
+        showOverlay();
     });
 
     audio.addEventListener('canplay', () => {
         logMessage('Audio can start playing');
         audioLoaded = checkMediaLoaded(audio, 'Audio');
-        if (audioLoaded) startMedia();
+        showOverlay();
     });
 
     function startMedia() {
@@ -80,6 +79,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (videoLoaded && video.src) {
             video.play().catch(logError);
             logMessage('Video started successfully');
+            logMessage(`Video dimensions: ${video.offsetWidth}x${video.offsetHeight}`);
+            logMessage(`Video visibility: ${window.getComputedStyle(video).display}`);
             overlay.style.display = 'none';
             videoPlaceholder.style.display = 'none';
             video.style.display = 'block';
@@ -95,31 +96,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // Set timeout for video loading
-    setTimeout(() => {
-        if (!videoLoaded) {
-            logMessage('Video loading timeout reached (10 seconds)');
-            videoPlaceholder.style.display = 'block';
-            video.style.display = 'none';
-            if (audioLoaded) {
-                logMessage('Playing audio without video after timeout');
-                audio.play().catch(logError);
-            }
-        }
-    }, 10000);
+    overlay.addEventListener('click', startMedia);
 
-    // Initial check for media loaded state
-    videoLoaded = checkMediaLoaded(video, 'Video');
-    audioLoaded = checkMediaLoaded(audio, 'Audio');
-
-    if (audioLoaded) startMedia();
-
-    // Add fade-in/fade-out effect
     function fadeEffect() {
         if (!videoLoaded || !video.src) return;
 
-        const fadeDuration = 2; // Duration of fade in seconds
-        const fadeStart = 1; // Start fading this many seconds before the end
+        const fadeDuration = 2;
+        const fadeStart = 1;
 
         if (video.currentTime > video.duration - fadeStart) {
             const fadeAmount = 1 - (video.duration - video.currentTime) / fadeStart;
@@ -133,11 +116,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         requestAnimationFrame(fadeEffect);
     }
 
-    // Start the fade effect
-    fadeEffect();
-
-    // Remove the 'timeupdate' event listener as we're now using requestAnimationFrame
-    video.removeEventListener('timeupdate', fadeEffect);
+    video.addEventListener('play', () => {
+        fadeEffect();
+    });
 
     video.addEventListener('ended', () => {
         video.currentTime = 0;
