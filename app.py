@@ -44,6 +44,7 @@ def index():
     logo_file = 'example_logo.png'
     logo_path = os.path.join(app.static_folder, 'logo', logo_file)
     logo_exists = os.path.exists(logo_path)
+    logger.info(f"Logo file path: {logo_path}")
     logger.info(f"Logo file exists: {logo_exists}")
     
     logger.info(f"Selected video file: {random_video}")

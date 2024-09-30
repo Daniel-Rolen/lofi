@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const audio = document.getElementById('background-audio');
     const debugArea = document.getElementById('debug-area');
     const videoPlaceholder = document.getElementById('video-placeholder');
+    const logoContainer = document.querySelector('.logo-container');
 
     let emptyCount = 0;
     const MAX_EMPTY_ATTEMPTS = 5;
@@ -58,6 +59,19 @@ document.addEventListener('DOMContentLoaded', function() {
     logMessage(`Initial video currentSrc: ${video.currentSrc}`);
     logMessage(`Video dimensions: ${video.offsetWidth}x${video.offsetHeight}`);
     logMessage(`Video visibility: ${window.getComputedStyle(video).display}`);
+
+    // Check if logo is present in the DOM
+    if (logoContainer) {
+        logMessage('Logo container is present in the DOM');
+        const logoImg = logoContainer.querySelector('img');
+        if (logoImg) {
+            logMessage(`Logo image src: ${logoImg.src}`);
+        } else {
+            logError('Logo image not found in the logo container');
+        }
+    } else {
+        logError('Logo container not found in the DOM');
+    }
 
     video.addEventListener('loadstart', () => {
         logMessage('Video load started');
