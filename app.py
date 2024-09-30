@@ -35,15 +35,15 @@ def index():
     else:
         logger.warning("No video file selected")
     
-    # Add logging for the logo file
+    # Check if the logo file exists
     logo_file = 'example_logo.png'
     logo_path = os.path.join(app.static_folder, 'logo', logo_file)
-    logger.info(f"Logo file path: {logo_path}")
-    logger.info(f"Logo file exists: {os.path.exists(logo_path)}")
+    logo_exists = os.path.exists(logo_path)
+    logger.info(f"Logo file exists: {logo_exists}")
     
     logger.info(f"Selected video file: {random_video}")
     logger.info(f"Selected audio file: {random_audio}")
-    return render_template('index.html', video_file=random_video, audio_file=random_audio, logo_file=logo_file)
+    return render_template('index.html', video_file=random_video, audio_file=random_audio, logo_file=logo_file, logo_exists=logo_exists)
 
 @app.route('/static/video/<path:filename>')
 def serve_video(filename):

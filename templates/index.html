@@ -19,9 +19,11 @@
         Your browser does not support the audio element.
     </audio>
     <div id="debug-area"></div>
+    {% if logo_exists %}
     <div class="logo-container">
-        <img src="{{ url_for('static', filename='logo/' + logo_file) }}" alt="Logo" class="logo">
+        <img src="{{ url_for('static', filename='logo/' + logo_file) }}" alt="" class="logo">
     </div>
+    {% endif %}
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

@@ -86,9 +86,5 @@ body {
 .logo {
     width: 100px;
     height: auto;
-    display: none;
-}
-
-.logo[src] {
     display: block;
 }

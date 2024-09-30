@@ -51,9 +51,16 @@ document.addEventListener('DOMContentLoaded', function() {
     video.addEventListener('canplay', () => {
         logMessage('Video can start playing');
         videoLoaded = checkMediaLoaded(video, 'Video');
+        logMessage(`Video loaded: ${videoLoaded}`);
+        logMessage(`Video src: ${video.src}`);
+        logMessage(`Video readyState: ${video.readyState}`);
         if (videoLoaded) {
             videoPlaceholder.style.display = 'none';
             video.style.display = 'block';
+        } else {
+            logMessage('Video not loaded, showing placeholder');
+            videoPlaceholder.style.display = 'block';
+            video.style.display = 'none';
         }
         startMedia();
     });
