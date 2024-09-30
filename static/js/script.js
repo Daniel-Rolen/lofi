@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const video = document.getElementById('background-video');
     const audio = document.getElementById('background-audio');
-    const overlay = document.querySelector('.overlay');
     const debugArea = document.getElementById('debug-area');
     const videoPlaceholder = document.getElementById('video-placeholder');
 
@@ -32,10 +31,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function showOverlay() {
-        overlay.style.display = 'flex';
-    }
-
     let videoLoaded = false;
     let audioLoaded = false;
 
@@ -60,13 +55,13 @@ document.addEventListener('DOMContentLoaded', function() {
             videoPlaceholder.style.display = 'none';
             video.style.display = 'block';
         }
-        showOverlay();
+        startMedia();
     });
 
     audio.addEventListener('canplay', () => {
         logMessage('Audio can start playing');
         audioLoaded = checkMediaLoaded(audio, 'Audio');
-        showOverlay();
+        startMedia();
     });
 
     function startMedia() {
@@ -81,22 +76,18 @@ document.addEventListener('DOMContentLoaded', function() {
             logMessage('Video started successfully');
             logMessage(`Video dimensions: ${video.offsetWidth}x${video.offsetHeight}`);
             logMessage(`Video visibility: ${window.getComputedStyle(video).display}`);
-            overlay.style.display = 'none';
             videoPlaceholder.style.display = 'none';
             video.style.display = 'block';
         } else {
             logMessage('Video not available or not loaded, showing placeholder');
             videoPlaceholder.style.display = 'block';
             video.style.display = 'none';
-            overlay.style.display = 'none';
             if (audioLoaded) {
                 logMessage('Playing audio without video');
                 audio.play().catch(logError);
             }
         }
     }
-
-    overlay.addEventListener('click', startMedia);
 
     function fadeEffect() {
         if (!videoLoaded || !video.src) return;

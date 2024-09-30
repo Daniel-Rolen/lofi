@@ -47,33 +47,6 @@ body {
     display: none;
 }
 
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    z-index: 1000;
-}
-
-.overlay h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.overlay p {
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
 #debug-area {
     position: fixed;
     bottom: 0;
@@ -113,5 +86,9 @@ body {
 .logo {
     width: 100px;
     height: auto;
+    display: none;
+}
+
+.logo[src] {
     display: block;
 }
