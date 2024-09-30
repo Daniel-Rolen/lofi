@@ -39,6 +39,12 @@ document.addEventListener('DOMContentLoaded', function() {
     logMessage(`Video dimensions: ${video.offsetWidth}x${video.offsetHeight}`);
     logMessage(`Video visibility: ${window.getComputedStyle(video).display}`);
 
+    video.addEventListener('loadstart', () => {
+        logMessage('Video load started');
+        logMessage(`Video src at loadstart: ${video.src}`);
+        logMessage(`Video currentSrc at loadstart: ${video.currentSrc}`);
+    });
+
     video.addEventListener('loadedmetadata', () => {
         logMessage('Video metadata loaded');
         logMessage(`Video src: ${video.src}`);
@@ -56,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         logMessage(`Video src: ${video.src}`);
         logMessage(`Video currentSrc: ${video.currentSrc}`);
         logMessage(`Video readyState: ${video.readyState}`);
-        if (videoLoaded && video.src) {
+        if (videoLoaded && video.src && video.currentSrc) {
             videoPlaceholder.style.display = 'none';
             video.style.display = 'block';
             video.play().catch(logError);
@@ -86,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
             logMessage('Audio started successfully');
         }
         
-        if (videoLoaded && video.src) {
+        if (videoLoaded && video.src && video.currentSrc) {
             video.play().catch(logError);
             logMessage('Video started successfully');
             logMessage(`Video src in startMedia: ${video.src}`);
@@ -105,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function fadeEffect() {
-        if (!videoLoaded || !video.src) return;
+        if (!videoLoaded || !video.src || !video.currentSrc) return;
 
         const fadeDuration = 2;
         const fadeStart = fadeDuration;
