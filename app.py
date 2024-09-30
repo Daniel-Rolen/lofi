@@ -12,12 +12,7 @@ logger = logging.getLogger(__name__)
 def get_random_file(folder, file_types):
     files = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f)) and f.lower().endswith(file_types)]
     logger.info(f"Available files in {folder}: {files}")
-    if not files:
-        logger.warning(f"No files found in {folder} with types {file_types}")
-        return None
-    chosen_file = random.choice(files)
-    logger.info(f"Chosen file: {chosen_file}")
-    return chosen_file
+    return files
 
 @app.route('/')
 def index():
@@ -25,14 +20,11 @@ def index():
     video_folder = os.path.join(app.static_folder, 'video')
     audio_folder = os.path.join(app.static_folder, 'audio')
     
-    # Log the contents of the video folder
-    video_files = os.listdir(video_folder)
-    logger.info(f"Contents of video folder: {video_files}")
+    video_files = get_random_file(video_folder, ('.mp4', '.webm', '.ogg', '.mov'))
+    audio_files = get_random_file(audio_folder, ('.mp3', '.ogg'))
     
-    random_video = get_random_file(video_folder, ('.mp4', '.webm', '.ogg', '.mov'))
-    random_audio = get_random_file(audio_folder, ('.mp3', '.ogg'))
+    random_video = random.choice(video_files) if video_files else None
     
-    # Log full path of the selected video file
     if random_video:
         full_video_path = os.path.join(video_folder, random_video)
         logger.info(f"Full path of selected video file: {full_video_path}")
@@ -48,8 +40,8 @@ def index():
     logger.info(f"Logo file exists: {logo_exists}")
     
     logger.info(f"Selected video file: {random_video}")
-    logger.info(f"Selected audio file: {random_audio}")
-    return render_template('index.html', video_file=random_video, audio_file=random_audio, logo_file=logo_file, logo_exists=logo_exists)
+    logger.info(f"Available audio files: {audio_files}")
+    return render_template('index.html', video_file=random_video, audio_files=audio_files, logo_file=logo_file, logo_exists=logo_exists)
 
 @app.route('/static/video/<path:filename>')
 def serve_video(filename):

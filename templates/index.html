@@ -14,8 +14,8 @@
         </video>
         <div id="video-placeholder"></div>
     </div>
-    <audio id="background-audio" autoplay loop>
-        <source src="{{ url_for('static', filename='audio/' + audio_file) }}" type="audio/mpeg">
+    <audio id="background-audio" autoplay>
+        <source src="{{ url_for('static', filename='audio/' + audio_files[0]) }}" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
     <div id="debug-area"></div>
@@ -24,6 +24,9 @@
         <img src="{{ url_for('static', filename='logo/' + logo_file) }}" alt="Logo" class="logo">
     </div>
     {% endif %}
+    <script>
+        var audioFiles = {{ audio_files|tojson|safe }};
+    </script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

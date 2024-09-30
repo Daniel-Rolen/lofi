@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let emptyCount = 0;
     const MAX_EMPTY_ATTEMPTS = 5;
+    let currentAudioIndex = 0;
 
     function logMessage(message) {
         console.log(message);
@@ -190,6 +191,12 @@ document.addEventListener('DOMContentLoaded', function() {
     video.addEventListener('ended', () => {
         video.currentTime = 0;
         video.play().catch(logError);
+    });
+
+    audio.addEventListener('ended', () => {
+        currentAudioIndex = (currentAudioIndex + 1) % audioFiles.length;
+        audio.src = `/static/audio/${audioFiles[currentAudioIndex]}`;
+        audio.play().catch(logError);
     });
 
     setInterval(() => {
